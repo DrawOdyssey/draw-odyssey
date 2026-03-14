@@ -5,7 +5,7 @@ import AppShell from "@/components/layout/AppShell";
 import {
   User, Settings, Image as ImageIcon, Video, Heart, Eye,
   Calendar, Award, Coins, Grid3X3, BarChart3, Edit3, Share2,
-  ExternalLink, Globe,
+  ExternalLink, Globe, Sparkles,
 } from "lucide-react";
 
 type Tab = "creations" | "liked" | "stats";
