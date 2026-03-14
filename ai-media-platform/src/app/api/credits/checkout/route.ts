@@ -1,11 +1,15 @@
-import { stripe, CREDIT_PACKAGES } from "@/lib/stripe";
+import { stripe, CREDIT_PACKS, SUBSCRIPTION_PLANS } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
-    const { packageId, userId } = await request.json();
+    const { packageId, userId, type } = await request.json();
 
-    const pkg = CREDIT_PACKAGES.find((p) => p.id === packageId);
+    // Check credit packs first, then subscription plans
+    const creditPack = CREDIT_PACKS.find((p) => p.id === packageId);
+    const subPlan = SUBSCRIPTION_PLANS.find((p) => p.id === packageId);
+
+    const pkg = creditPack || subPlan;
     if (!pkg) {
       return NextResponse.json({ error: "Invalid package" }, { status: 400 });
     }
@@ -17,8 +21,10 @@ export async function POST(request: Request) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: `${pkg.name} - ${pkg.credits} Credits`,
-              description: `${pkg.credits} credits for Draw Odyssey`,
+              name: `${pkg.name}${creditPack ? ` - ${creditPack.credits} Credits` : ""}`,
+              description: creditPack
+                ? `${creditPack.credits} credits for Draw Odyssey`
+                : `${subPlan?.name} subscription`,
             },
             unit_amount: pkg.price,
           },
@@ -26,12 +32,13 @@ export async function POST(request: Request) {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?purchase=success&credits=${pkg.credits}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?purchase=cancelled`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?purchase=success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe?purchase=cancelled`,
       metadata: {
         userId,
         packageId: pkg.id,
-        credits: pkg.credits.toString(),
+        credits: String(creditPack?.credits || subPlan?.credits || 0),
+        type: type || "credits",
       },
     });
 
