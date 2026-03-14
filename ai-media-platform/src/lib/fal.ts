@@ -52,7 +52,7 @@ export const EDIT_MODELS: AIModel[] = [
 
 export const ALL_MODELS = [...IMAGE_MODELS, ...VIDEO_MODELS, ...UPSCALE_MODELS, ...EDIT_MODELS];
 export function getCategories(models: AIModel[]): string[] {
-  return [...new Set(models.map((m) => m.category))];
+return Array.from(new Set(models.map((m) => m.category)));
 }
 
 // ── STYLE TRANSFER / IMG2IMG MODELS ──
