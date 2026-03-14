@@ -78,7 +78,7 @@ const AGENTS: Agent[] = [
   },
 ];
 
-const CATEGORIES = ["All", ...new Set(AGENTS.map((a) => a.category))];
+const CATEGORIES = ["All", ...Array.from(new Set(AGENTS.map((a) => a.category)))];
 
 interface RunningAgent {
   agentId: string;
