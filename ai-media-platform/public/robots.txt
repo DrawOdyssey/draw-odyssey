@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /profile/settings
+
+Sitemap: https://drawodyssey.com/sitemap.xml
